@@ -24,17 +24,17 @@ typedef unsigned int uint;
 
 // IN_BUF_SIZE is the size of the file read buffer.
 // IN_BUF_SIZE must be >= 1
-#define IN_BUF_SIZE (1024*512)
+#define IN_BUF_SIZE (1024)
 static uint8 s_inbuf[IN_BUF_SIZE];
 
 // COMP_OUT_BUF_SIZE is the size of the output buffer used during compression.
 // COMP_OUT_BUF_SIZE must be >= 1 and <= OUT_BUF_SIZE
-#define COMP_OUT_BUF_SIZE (1024*512)
+#define COMP_OUT_BUF_SIZE (1024)
 
 // OUT_BUF_SIZE is the size of the output buffer used during decompression.
 // OUT_BUF_SIZE must be a power of 2 >= TINFL_LZ_DICT_SIZE (because the low-level decompressor not only writes, but reads from the output buffer as it decompresses)
 //#define OUT_BUF_SIZE (TINFL_LZ_DICT_SIZE)
-#define OUT_BUF_SIZE (1024*512)
+#define OUT_BUF_SIZE (1024)
 static uint8 s_outbuf[OUT_BUF_SIZE];
 
 // tdefl_compressor contains all the state needed by the low-level compressor so it's a pretty big struct (~300k).
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
       uint infile_remaining = infile_size;
 
       // create tdefl() compatible flags (we have to compose the low-level flags ourselves, or use tdefl_create_comp_flags_from_zip_params() but that means MINIZ_NO_ZLIB_APIS can't be defined).
-      mz_uint comp_flags = TDEFL_WRITE_ZLIB_HEADER | s_tdefl_num_probes[MZ_MIN(10, level)] | ((level <= 3) ? TDEFL_GREEDY_PARSING_FLAG : 0);
+      mz_uint comp_flags = s_tdefl_num_probes[MZ_MIN(10, level)] | ((level <= 3) ? TDEFL_GREEDY_PARSING_FLAG : 0);
       if (!level)
          comp_flags |= TDEFL_FORCE_ALL_RAW_BLOCKS;
 
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
 
          in_bytes = avail_in;
          out_bytes = avail_out;
-         status = tinfl_decompress(&inflator, (const mz_uint8 *)next_in, &in_bytes, s_outbuf, (mz_uint8 *)next_out, &out_bytes, (infile_remaining ? TINFL_FLAG_HAS_MORE_INPUT : 0) | TINFL_FLAG_PARSE_ZLIB_HEADER);
+         status = tinfl_decompress(&inflator, (const mz_uint8 *)next_in, &in_bytes, s_outbuf, (mz_uint8 *)next_out, &out_bytes, (infile_remaining ? TINFL_FLAG_HAS_MORE_INPUT : 0) | 0);
 
          avail_in -= in_bytes;
          next_in = (const mz_uint8 *)next_in + in_bytes;

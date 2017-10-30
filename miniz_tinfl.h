@@ -49,7 +49,7 @@ tinfl_decompressor *tinfl_decompressor_alloc();
 void tinfl_decompressor_free(tinfl_decompressor *pDecomp);
 
 /* Max size of LZ dictionary. */
-#define TINFL_LZ_DICT_SIZE 32768
+#define TINFL_LZ_DICT_SIZE 1024
 
 /* Return status. */
 typedef enum {
